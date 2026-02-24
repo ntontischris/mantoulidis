@@ -302,5 +302,107 @@
       "latestNews": "Latest News",
       "spotlight": "Alumni Spotlight"
     }
+  },
+  "landing": {
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "activities": "Activities",
+      "platform": "Platform",
+      "contact": "Contact",
+      "login": "Login"
+    },
+    "hero": {
+      "eyebrow": "Alumni Association of Mandoulides Educational Institutions",
+      "line1": "The world of",
+      "line2": "Mandoulides",
+      "line3": "Alumni",
+      "subtitle": "Connect with thousands of alumni. Find opportunities, mentors, and old friends.",
+      "cta": "Enter Platform",
+      "ctaSecondary": "Learn More",
+      "scrollHint": "Scroll to explore"
+    },
+    "stats": {
+      "members": { "value": "500+", "label": "Members" },
+      "years": { "value": "20+", "label": "Years" },
+      "events": { "value": "50+", "label": "Events" },
+      "businesses": { "value": "100+", "label": "Businesses" }
+    },
+    "about": {
+      "eyebrow": "Our History",
+      "title": "A community with deep roots",
+      "p1": "The Alumni Association of Mandoulides Educational Institutions unites graduates from all generations who passed through the halls of Mandoulides schools in Thermi, Thessaloniki.",
+      "p2": "With over 20 years of presence, we organize events, promote professional networking, and keep our community alive and thriving.",
+      "quote1": "Culture is not inherited, it is conquered",
+      "quote2": "A healthy mind in a healthy body"
+    },
+    "activities": {
+      "title": "Alumni Activities",
+      "subtitle": "Active across four domains",
+      "sports": {
+        "title": "Sports",
+        "description": "Athletic activities, tournaments and competitions that unite alumni"
+      },
+      "culture": {
+        "title": "Culture",
+        "description": "Cultural events, theatre, music and visual arts activities"
+      },
+      "europe": {
+        "title": "European Action",
+        "description": "Participation in European programmes and international collaborations"
+      },
+      "academic": {
+        "title": "Academic Activity",
+        "description": "Seminars, lectures and academic collaborations between alumni"
+      }
+    },
+    "features": {
+      "title": "The Platform",
+      "subtitle": "Everything you need to stay connected",
+      "directory": {
+        "title": "Member Directory",
+        "description": "Find and connect with alumni from all generations"
+      },
+      "jobs": {
+        "title": "Job Listings",
+        "description": "Career opportunities exclusively within the alumni network"
+      },
+      "mentorship": {
+        "title": "Mentorship",
+        "description": "Connect with experienced alumni for guidance and support"
+      },
+      "events": {
+        "title": "Events",
+        "description": "Attend events and reconnect with old friends"
+      },
+      "gallery": {
+        "title": "Photo Gallery",
+        "description": "Memories and moments from the life of the community"
+      },
+      "groups": {
+        "title": "Groups",
+        "description": "Create or join groups with shared interests"
+      }
+    },
+    "cta": {
+      "title": "Join the community",
+      "subtitle": "Connect with hundreds of alumni, find opportunities, and remain part of a community with values and history.",
+      "button": "Enter Platform"
+    },
+    "footer": {
+      "tagline": "Alumni Association of Mandoulides Educational Institutions",
+      "linksTitle": "Links",
+      "contactTitle": "Contact",
+      "addressTitle": "Schools",
+      "email": "info@alumni-mandoulides.com",
+      "phone": "+30 2310 489 168",
+      "secretary": "Secretary: Estella Adamidou",
+      "address1": "6th km Harilaou-Thermis Road, 570 01, Thermi",
+      "address2": "12th km Thessaloniki-N. Moudanion National Road, 570 01, Thermi",
+      "address1Label": "Primary School",
+      "address2Label": "Secondary School",
+      "copyright": "© {year} Alumni Association of Mandoulides Educational Institutions. All rights reserved.",
+      "poweredBy": "Powered by Alumni Connect"
+    }
   }
 }
