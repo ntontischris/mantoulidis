@@ -1,0 +1,306 @@
+{
+  "common": {
+    "loading": "Φόρτωση...",
+    "error": "Κάτι πήγε στραβά",
+    "retry": "Δοκιμάστε ξανά",
+    "save": "Αποθήκευση",
+    "cancel": "Ακύρωση",
+    "delete": "Διαγραφή",
+    "edit": "Επεξεργασία",
+    "view": "Προβολή",
+    "back": "Πίσω",
+    "next": "Επόμενο",
+    "previous": "Προηγούμενο",
+    "submit": "Υποβολή",
+    "confirm": "Επιβεβαίωση",
+    "search": "Αναζήτηση",
+    "filter": "Φίλτρα",
+    "clear": "Καθαρισμός",
+    "close": "Κλείσιμο",
+    "yes": "Ναι",
+    "no": "Όχι",
+    "or": "ή",
+    "and": "και",
+    "noResults": "Δεν βρέθηκαν αποτελέσματα",
+    "seeAll": "Δείτε όλα",
+    "requiredField": "Υποχρεωτικό πεδίο"
+  },
+  "nav": {
+    "home": "Αρχική",
+    "directory": "Κατάλογος",
+    "businesses": "Επιχειρήσεις",
+    "benefits": "Παροχές",
+    "events": "Εκδηλώσεις",
+    "gallery": "Γκαλερί",
+    "jobs": "Εργασία",
+    "mentorship": "Mentorship",
+    "messages": "Μηνύματα",
+    "groups": "Ομάδες",
+    "news": "Νέα",
+    "profile": "Προφίλ",
+    "settings": "Ρυθμίσεις",
+    "admin": "Διαχείριση",
+    "logout": "Αποσύνδεση",
+    "login": "Σύνδεση",
+    "register": "Εγγραφή"
+  },
+  "auth": {
+    "login": {
+      "title": "Σύνδεση",
+      "subtitle": "Καλώς ήρθατε πίσω",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your@email.com",
+      "passwordLabel": "Κωδικός πρόσβασης",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Ξεχάσατε τον κωδικό;",
+      "loginButton": "Σύνδεση",
+      "magicLinkButton": "Σύνδεση με Magic Link",
+      "googleButton": "Σύνδεση με Google",
+      "noAccount": "Δεν έχετε λογαριασμό;",
+      "registerLink": "Εγγραφή",
+      "errors": {
+        "invalidCredentials": "Λάθος email ή κωδικός",
+        "emailRequired": "Απαιτείται email",
+        "passwordRequired": "Απαιτείται κωδικός",
+        "emailInvalid": "Μη έγκυρο email"
+      }
+    },
+    "register": {
+      "title": "Εγγραφή",
+      "subtitle": "Δημιουργήστε τον λογαριασμό σας",
+      "firstNameLabel": "Όνομα",
+      "lastNameLabel": "Επώνυμο",
+      "emailLabel": "Email",
+      "passwordLabel": "Κωδικός πρόσβασης",
+      "confirmPasswordLabel": "Επιβεβαίωση κωδικού",
+      "registerButton": "Δημιουργία λογαριασμού",
+      "haveAccount": "Έχετε ήδη λογαριασμό;",
+      "loginLink": "Σύνδεση",
+      "errors": {
+        "passwordMismatch": "Οι κωδικοί δεν ταιριάζουν",
+        "passwordTooShort": "Ο κωδικός πρέπει να έχει τουλάχιστον 8 χαρακτήρες",
+        "emailAlreadyInUse": "Το email χρησιμοποιείται ήδη"
+      }
+    },
+    "onboarding": {
+      "title": "Ολοκλήρωση προφίλ",
+      "step1": "Προσωπικά στοιχεία",
+      "step2": "Επαγγελματικά στοιχεία",
+      "step3": "Βιογραφικό & Δεξιότητες",
+      "step4": "Φωτογραφία & Ρυθμίσεις",
+      "graduationYearLabel": "Έτος αποφοίτησης",
+      "departmentLabel": "Τμήμα / Κατεύθυνση",
+      "professionLabel": "Επάγγελμα",
+      "companyLabel": "Εταιρεία / Οργανισμός",
+      "bioLabel": "Βιογραφικό",
+      "bioPlaceholder": "Πείτε μας λίγα πράγματα για εσάς...",
+      "skipForNow": "Παράλειψη προς το παρόν",
+      "complete": "Ολοκλήρωση"
+    },
+    "magicLink": {
+      "sent": "Ελέγξτε το email σας",
+      "sentDescription": "Στείλαμε σύνδεσμο σύνδεσης στο {email}",
+      "resend": "Αποστολή νέου συνδέσμου"
+    },
+    "forgotPassword": {
+      "title": "Επαναφορά κωδικού",
+      "description": "Εισάγετε το email σας και θα σας στείλουμε οδηγίες",
+      "button": "Αποστολή οδηγιών",
+      "success": "Ελέγξτε το email σας"
+    }
+  },
+  "directory": {
+    "title": "Κατάλογος Αποφοίτων",
+    "subtitle": "Ανακαλύψτε τους συναδέλφους σας",
+    "searchPlaceholder": "Αναζήτηση ονόματος, επαγγέλματος, εταιρείας...",
+    "filters": {
+      "graduationYear": "Έτος αποφοίτησης",
+      "industry": "Κλάδος",
+      "location": "Τοποθεσία",
+      "isMentor": "Διαθέσιμοι mentors",
+      "all": "Όλοι",
+      "applyFilters": "Εφαρμογή φίλτρων",
+      "clearFilters": "Καθαρισμός φίλτρων"
+    },
+    "views": {
+      "grid": "Πλέγμα",
+      "list": "Λίστα",
+      "map": "Χάρτης"
+    },
+    "memberCard": {
+      "message": "Μήνυμα",
+      "viewProfile": "Προφίλ",
+      "mentor": "Mentor",
+      "class": "Τάξη"
+    },
+    "noResults": "Δεν βρέθηκαν αποτελιματα με αυτά τα κριτήρια",
+    "loadMore": "Φόρτωση περισσότερων"
+  },
+  "benefits": {
+    "title": "Αποκλειστικές Παροχές",
+    "subtitle": "Ειδικές προσφορές για μέλη",
+    "redeem": "Εξαργύρωση",
+    "redeemed": "Εξαργυρώθηκε",
+    "expiresOn": "Λήγει {date}",
+    "unlimited": "Απεριόριστες εξαργυρώσεις",
+    "remaining": "{count} εναπομείναντα",
+    "categories": {
+      "all": "Όλες",
+      "dining": "Εστίαση",
+      "professional": "Επαγγελματικές",
+      "health": "Υγεία",
+      "education": "Εκπαίδευση",
+      "retail": "Αγορές",
+      "other": "Άλλες"
+    },
+    "types": {
+      "percentage": "{value}% έκπτωση",
+      "fixed": "€{value} έκπτωση",
+      "free": "Δωρεάν",
+      "bundle": "Πακέτο",
+      "priority": "Προτεραιότητα"
+    }
+  },
+  "events": {
+    "title": "Εκδηλώσεις",
+    "subtitle": "Μη χάσετε τις επερχόμενες εκδηλώσεις",
+    "upcoming": "Επερχόμενες",
+    "past": "Παρελθοντικές",
+    "rsvp": "Εγγραφή",
+    "attending": "Συμμετέχω",
+    "notAttending": "Δεν συμμετέχω",
+    "waitlist": "Λίστα αναμονής",
+    "addToCalendar": "Προσθήκη στο ημερολόγιο",
+    "capacity": "{count} θέσεις",
+    "spotsLeft": "{count} διαθέσιμες θέσεις",
+    "full": "Πλήρες",
+    "free": "Δωρεάν",
+    "virtual": "Διαδικτυακή",
+    "inPerson": "Δια ζώσης",
+    "hybrid": "Υβριδική",
+    "organizer": "Διοργανωτής",
+    "attendees": "Συμμετέχοντες"
+  },
+  "jobs": {
+    "title": "Αγγελίες Εργασίας",
+    "subtitle": "Ευκαιρίες μέσα στο δίκτυο αποφοίτων",
+    "post": "Δημοσίευση αγγελίας",
+    "apply": "Υποβολή αίτησης",
+    "save": "Αποθήκευση",
+    "fullTime": "Πλήρης απασχόληση",
+    "partTime": "Μερική απασχόληση",
+    "contract": "Σύμβαση",
+    "freelance": "Ελεύθερος επαγγελματίας",
+    "internship": "Πρακτική άσκηση",
+    "remote": "Εξ αποστάσεως",
+    "hybrid": "Υβριδικό",
+    "onSite": "Επί τόπου",
+    "deadline": "Λήξη αιτήσεων",
+    "postedBy": "Δημοσιεύτηκε από"
+  },
+  "mentorship": {
+    "title": "Mentorship",
+    "subtitle": "Σύνδεση με έμπειρους αποφοίτους",
+    "becomeMentor": "Γίνετε mentor",
+    "findMentor": "Βρείτε mentor",
+    "request": "Αίτηση mentorship",
+    "accept": "Αποδοχή",
+    "decline": "Απόρριψη",
+    "active": "Ενεργό",
+    "completed": "Ολοκληρωμένο",
+    "pending": "Εκκρεμές",
+    "expertise": "Τομείς εξειδίκευσης",
+    "availability": "Διαθεσιμότητα"
+  },
+  "messages": {
+    "title": "Μηνύματα",
+    "newMessage": "Νέο μήνυμα",
+    "searchConversations": "Αναζήτηση συνομιλιών...",
+    "messagePlaceholder": "Γράψτε ένα μήνυμα...",
+    "send": "Αποστολή",
+    "you": "Εσείς",
+    "noConversations": "Δεν υπάρχουν συνομιλίες",
+    "startConversation": "Ξεκινήστε μια συνομιλία",
+    "typing": "πληκτρολογεί...",
+    "seen": "Εώθη",
+    "delivered": "Παραδόθηκε"
+  },
+  "profile": {
+    "editProfile": "Επεξεργασία προφίλ",
+    "memberSince": "Μέλος από",
+    "graduationYear": "Αποφοίτησε",
+    "department": "Τμήμα",
+    "company": "Εταιρεία",
+    "position": "Θέση",
+    "location": "Τοποθεσία",
+    "bio": "Βιογραφικό",
+    "skills": "Δεξιότητες",
+    "membershipCard": "Κάρτα μέλους",
+    "verifiedMember": "Επαληθευμένο μέλος",
+    "tabs": {
+      "about": "Σχετικά",
+      "business": "Επιχείρηση",
+      "activity": "Δραστηριότητα"
+    }
+  },
+  "settings": {
+    "title": "Ρυθμίσεις",
+    "language": "Γλώσσα",
+    "theme": "Θέμα",
+    "themeLight": "Φωτεινό",
+    "themeDark": "Σκοτεινό",
+    "themeSystem": "Σύστημα",
+    "notifications": "Ειδοποιήσεις",
+    "privacy": "Απόρρητο",
+    "emailPublic": "Εμφάνιση email στο προφίλ",
+    "phonePublic": "Εμφάνιση τηλεφώνου στο προφίλ",
+    "changePassword": "Αλλαγή κωδικού",
+    "deleteAccount": "Διαγραφή λογαριασμού",
+    "saveChanges": "Αποθήκευση αλλαγών"
+  },
+  "admin": {
+    "title": "Διαχειριστικό Πάνελ",
+    "users": "Χρήστες",
+    "content": "Περιεχόμενο",
+    "analytics": "Αναλυτικά",
+    "moderation": "Εποπτεία",
+    "verify": "Επαλήθευση",
+    "suspend": "Αναστολή",
+    "activate": "Ενεργοποίηση",
+    "changeRole": "Αλλαγή ρόλου",
+    "totalMembers": "Σύνολο μελών",
+    "activeMembers": "Ενεργά μέλη",
+    "pendingVerification": "Αναμένουν επαλήθευση",
+    "totalEvents": "Σύνολο εκδηλώσεων",
+    "totalBenefits": "Σύνολο παροχών"
+  },
+  "errors": {
+    "notFound": "Η σελίδα δεν βρέθηκε",
+    "notFoundDescription": "Η σελίδα που ζητήσατε δεν υπάρχει.",
+    "unauthorized": "Δεν έχετε πρόσβαση",
+    "unauthorizedDescription": "Δεν έχετε δικαίωμα να δείτε αυτήν τη σελίδα.",
+    "serverError": "Σφάλμα διακομιστή",
+    "serverErrorDescription": "Κάτι πήγε στραβά. Παρακαλώ δοκιμάστε ξανά αργότερα.",
+    "goHome": "Αρχική σελίδα"
+  },
+  "home": {
+    "hero": {
+      "title": "Το Δίκτυο Αποφοίτων",
+      "subtitle": "Συνδεθείτε, συνεργαστείτε και αναπτυχθείτε μαζί",
+      "joinButton": "Εγγραφή",
+      "exploreButton": "Εξερεύνηση"
+    },
+    "stats": {
+      "members": "Μέλη",
+      "businesses": "Επιχειρήσεις",
+      "events": "Εκδηλώσεις",
+      "benefits": "Παροχές"
+    },
+    "sections": {
+      "featuredBenefits": "Επιλεγμένες Παροχές",
+      "upcomingEvents": "Επερχόμενες Εκδηλώσεις",
+      "latestNews": "Τελευταία Νέα",
+      "spotlight": "Spotlight Αποφοίτου"
+    }
+  }
+}

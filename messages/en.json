@@ -1,0 +1,306 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filters",
+    "clear": "Clear",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "noResults": "No results found",
+    "seeAll": "See all",
+    "requiredField": "Required field"
+  },
+  "nav": {
+    "home": "Home",
+    "directory": "Directory",
+    "businesses": "Businesses",
+    "benefits": "Benefits",
+    "events": "Events",
+    "gallery": "Gallery",
+    "jobs": "Jobs",
+    "mentorship": "Mentorship",
+    "messages": "Messages",
+    "groups": "Groups",
+    "news": "News",
+    "profile": "Profile",
+    "settings": "Settings",
+    "admin": "Admin",
+    "logout": "Logout",
+    "login": "Login",
+    "register": "Register"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Welcome back",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your@email.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Sign in",
+      "magicLinkButton": "Sign in with Magic Link",
+      "googleButton": "Sign in with Google",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Register",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "emailRequired": "Email is required",
+        "passwordRequired": "Password is required",
+        "emailInvalid": "Invalid email address"
+      }
+    },
+    "register": {
+      "title": "Register",
+      "subtitle": "Create your account",
+      "firstNameLabel": "First name",
+      "lastNameLabel": "Last name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "confirmPasswordLabel": "Confirm password",
+      "registerButton": "Create account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "emailAlreadyInUse": "Email is already in use"
+      }
+    },
+    "onboarding": {
+      "title": "Complete your profile",
+      "step1": "Personal details",
+      "step2": "Professional details",
+      "step3": "Bio & Skills",
+      "step4": "Photo & Settings",
+      "graduationYearLabel": "Graduation year",
+      "departmentLabel": "Department / Major",
+      "professionLabel": "Profession",
+      "companyLabel": "Company / Organization",
+      "bioLabel": "Bio",
+      "bioPlaceholder": "Tell us a little about yourself...",
+      "skipForNow": "Skip for now",
+      "complete": "Complete setup"
+    },
+    "magicLink": {
+      "sent": "Check your email",
+      "sentDescription": "We sent a login link to {email}",
+      "resend": "Resend link"
+    },
+    "forgotPassword": {
+      "title": "Reset password",
+      "description": "Enter your email and we'll send you instructions",
+      "button": "Send instructions",
+      "success": "Check your email"
+    }
+  },
+  "directory": {
+    "title": "Alumni Directory",
+    "subtitle": "Discover your fellow alumni",
+    "searchPlaceholder": "Search by name, profession, company...",
+    "filters": {
+      "graduationYear": "Graduation year",
+      "industry": "Industry",
+      "location": "Location",
+      "isMentor": "Available mentors",
+      "all": "All",
+      "applyFilters": "Apply filters",
+      "clearFilters": "Clear filters"
+    },
+    "views": {
+      "grid": "Grid",
+      "list": "List",
+      "map": "Map"
+    },
+    "memberCard": {
+      "message": "Message",
+      "viewProfile": "Profile",
+      "mentor": "Mentor",
+      "class": "Class"
+    },
+    "noResults": "No results found for these criteria",
+    "loadMore": "Load more"
+  },
+  "benefits": {
+    "title": "Exclusive Benefits",
+    "subtitle": "Special offers for members",
+    "redeem": "Redeem",
+    "redeemed": "Redeemed",
+    "expiresOn": "Expires {date}",
+    "unlimited": "Unlimited redemptions",
+    "remaining": "{count} remaining",
+    "categories": {
+      "all": "All",
+      "dining": "Dining",
+      "professional": "Professional",
+      "health": "Health",
+      "education": "Education",
+      "retail": "Retail",
+      "other": "Other"
+    },
+    "types": {
+      "percentage": "{value}% off",
+      "fixed": "€{value} off",
+      "free": "Free",
+      "bundle": "Bundle",
+      "priority": "Priority access"
+    }
+  },
+  "events": {
+    "title": "Events",
+    "subtitle": "Don't miss upcoming events",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "rsvp": "RSVP",
+    "attending": "Attending",
+    "notAttending": "Not attending",
+    "waitlist": "Join waitlist",
+    "addToCalendar": "Add to calendar",
+    "capacity": "{count} spots",
+    "spotsLeft": "{count} spots left",
+    "full": "Full",
+    "free": "Free",
+    "virtual": "Virtual",
+    "inPerson": "In person",
+    "hybrid": "Hybrid",
+    "organizer": "Organizer",
+    "attendees": "Attendees"
+  },
+  "jobs": {
+    "title": "Job Board",
+    "subtitle": "Opportunities within the alumni network",
+    "post": "Post a job",
+    "apply": "Apply",
+    "save": "Save",
+    "fullTime": "Full-time",
+    "partTime": "Part-time",
+    "contract": "Contract",
+    "freelance": "Freelance",
+    "internship": "Internship",
+    "remote": "Remote",
+    "hybrid": "Hybrid",
+    "onSite": "On-site",
+    "deadline": "Application deadline",
+    "postedBy": "Posted by"
+  },
+  "mentorship": {
+    "title": "Mentorship",
+    "subtitle": "Connect with experienced alumni",
+    "becomeMentor": "Become a mentor",
+    "findMentor": "Find a mentor",
+    "request": "Request mentorship",
+    "accept": "Accept",
+    "decline": "Decline",
+    "active": "Active",
+    "completed": "Completed",
+    "pending": "Pending",
+    "expertise": "Areas of expertise",
+    "availability": "Availability"
+  },
+  "messages": {
+    "title": "Messages",
+    "newMessage": "New message",
+    "searchConversations": "Search conversations...",
+    "messagePlaceholder": "Write a message...",
+    "send": "Send",
+    "you": "You",
+    "noConversations": "No conversations yet",
+    "startConversation": "Start a conversation",
+    "typing": "is typing...",
+    "seen": "Seen",
+    "delivered": "Delivered"
+  },
+  "profile": {
+    "editProfile": "Edit profile",
+    "memberSince": "Member since",
+    "graduationYear": "Graduated",
+    "department": "Department",
+    "company": "Company",
+    "position": "Position",
+    "location": "Location",
+    "bio": "Bio",
+    "skills": "Skills",
+    "membershipCard": "Membership card",
+    "verifiedMember": "Verified member",
+    "tabs": {
+      "about": "About",
+      "business": "Business",
+      "activity": "Activity"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "emailPublic": "Show email on profile",
+    "phonePublic": "Show phone on profile",
+    "changePassword": "Change password",
+    "deleteAccount": "Delete account",
+    "saveChanges": "Save changes"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "content": "Content",
+    "analytics": "Analytics",
+    "moderation": "Moderation",
+    "verify": "Verify",
+    "suspend": "Suspend",
+    "activate": "Activate",
+    "changeRole": "Change role",
+    "totalMembers": "Total members",
+    "activeMembers": "Active members",
+    "pendingVerification": "Pending verification",
+    "totalEvents": "Total events",
+    "totalBenefits": "Total benefits"
+  },
+  "errors": {
+    "notFound": "Page not found",
+    "notFoundDescription": "The page you requested does not exist.",
+    "unauthorized": "Unauthorized",
+    "unauthorizedDescription": "You don't have permission to view this page.",
+    "serverError": "Server error",
+    "serverErrorDescription": "Something went wrong. Please try again later.",
+    "goHome": "Go home"
+  },
+  "home": {
+    "hero": {
+      "title": "The Alumni Network",
+      "subtitle": "Connect, collaborate, and grow together",
+      "joinButton": "Join now",
+      "exploreButton": "Explore"
+    },
+    "stats": {
+      "members": "Members",
+      "businesses": "Businesses",
+      "events": "Events",
+      "benefits": "Benefits"
+    },
+    "sections": {
+      "featuredBenefits": "Featured Benefits",
+      "upcomingEvents": "Upcoming Events",
+      "latestNews": "Latest News",
+      "spotlight": "Alumni Spotlight"
+    }
+  }
+}

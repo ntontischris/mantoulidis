@@ -2,26 +2,103 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Alumni Connect Light Mode */
+    --background: #F5F7FA;
+    --foreground: #1A1A2E;
+    --card: #FFFFFF;
+    --card-foreground: #1A1A2E;
+    --popover: #FFFFFF;
+    --popover-foreground: #1A1A2E;
+    --primary: #1B3A5C;
+    --primary-foreground: #FFFFFF;
+    --secondary: #2E75B6;
+    --secondary-foreground: #FFFFFF;
+    --muted: #EEF2F7;
+    --muted-foreground: #64748B;
+    --accent: #E8B931;
+    --accent-foreground: #1A1A2E;
+    --destructive: #E74C3C;
+    --destructive-foreground: #FFFFFF;
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --ring: #2E75B6;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Alumni Connect Dark Mode */
+    --background: #0F172A;
+    --foreground: #F1F5F9;
+    --card: #1E293B;
+    --card-foreground: #F1F5F9;
+    --popover: #1E293B;
+    --popover-foreground: #F1F5F9;
+    --primary: #5585AD;
+    --primary-foreground: #FFFFFF;
+    --secondary: #2E75B6;
+    --secondary-foreground: #FFFFFF;
+    --muted: #334155;
+    --muted-foreground: #94A3B8;
+    --accent: #E8B931;
+    --accent-foreground: #1A1A2E;
+    --destructive: #E74C3C;
+    --destructive-foreground: #FFFFFF;
+    --border: #334155;
+    --input: #334155;
+    --ring: #5585AD;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Focus-visible styles for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans tracking-tight;
+  }
+
+  /* Links */
+  a {
+    @apply transition-colors;
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Skeleton loading animation */
+  .skeleton {
+    @apply animate-pulse rounded-md bg-muted;
+  }
+
+  /* Gradient brand text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-secondary bg-clip-text text-transparent;
+  }
+
+  /* Card base */
+  .card-base {
+    @apply rounded-lg border border-border bg-card p-6 shadow-card transition-shadow hover:shadow-card-hover;
   }
 }
