@@ -23,7 +23,7 @@ export default function AdminUsersPage() {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const { data: users, isLoading } = useAdminUsers(search)
+  const { data: users, isLoading, isError, error } = useAdminUsers(search)
   const { mutate: bulkUpdate, isPending } = useBulkUpdateUsers()
 
   function toggleSelect(id: string) {
@@ -128,6 +128,13 @@ export default function AdminUsersPage() {
                   ))}
                 </tr>
               ))
+            ) : isError ? (
+              <tr>
+                <td colSpan={6} className="px-4 py-8 text-center text-sm text-destructive">
+                  ⚠️ Σφάλμα φόρτωσης:{' '}
+                  {(error as Error)?.message ?? 'Αδυναμία σύνδεσης με τη βάση δεδομένων'}
+                </td>
+              </tr>
             ) : users && users.length > 0 ? (
               users.map((user) => (
                 <tr

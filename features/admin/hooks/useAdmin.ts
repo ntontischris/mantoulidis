@@ -40,7 +40,7 @@ export function usePlatformStats() {
       const supabase = createClient()
 
       const [
-        { count: totalMembers },
+        { count: totalMembers, error: e1 },
         { count: activeMembers },
         { count: verifiedMembers },
         { count: pendingBusinesses },
@@ -76,6 +76,8 @@ export function usePlatformStats() {
         supabase.from('groups').select('id', { count: 'exact', head: true }),
         supabase.from('messages').select('id', { count: 'exact', head: true }),
       ])
+
+      if (e1) throw e1
 
       return {
         totalMembers: totalMembers ?? 0,

@@ -1,4 +1,5 @@
 import { TopBar } from '@/components/shared/TopBar'
+import { AuthInitializer } from '@/components/shared/AuthInitializer'
 import Link from 'next/link'
 
 const adminNavItems = [
@@ -55,6 +56,7 @@ export default async function AdminLayout({
 
       {/* Main */}
       <div className="flex flex-1 flex-col overflow-hidden">
+        <AuthInitializer />
         <TopBar locale={locale} />
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">{children}</main>
       </div>
