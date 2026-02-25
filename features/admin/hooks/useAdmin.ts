@@ -2,7 +2,23 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
-import type { ProfileRow } from '@/lib/supabase/types'
+import type {
+  ProfileRow,
+  AnnouncementRow,
+  AnnouncementInsert,
+  AnnouncementUpdate,
+  PollRow,
+  PollOptionRow,
+  PollInsert,
+  PollOptionInsert,
+  EventRow,
+  EventUpdate,
+  JobRow,
+  JobUpdate,
+  GalleryAlbumRow,
+  GalleryPhotoRow,
+  GroupRow,
+} from '@/lib/supabase/types'
 
 // ── Platform stats ────────────────────────────────────────────────────────────
 
@@ -35,11 +51,27 @@ export function usePlatformStats() {
         { count: totalMessages },
       ] = await Promise.all([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('membership_status', 'active'),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).in('role', ['verified_member', 'admin', 'super_admin']),
-        supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('is_verified', false).eq('is_active', true),
-        supabase.from('success_stories').select('id', { count: 'exact', head: true }).eq('is_approved', false),
-        supabase.from('events').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+        supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .eq('membership_status', 'active'),
+        supabase
+          .from('profiles')
+          .select('id', { count: 'exact', head: true })
+          .in('role', ['verified_member', 'admin', 'super_admin']),
+        supabase
+          .from('businesses')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_verified', false)
+          .eq('is_active', true),
+        supabase
+          .from('success_stories')
+          .select('id', { count: 'exact', head: true })
+          .eq('is_approved', false),
+        supabase
+          .from('events')
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'published'),
         supabase.from('jobs').select('id', { count: 'exact', head: true }).eq('status', 'open'),
         supabase.from('groups').select('id', { count: 'exact', head: true }),
         supabase.from('messages').select('id', { count: 'exact', head: true }),
@@ -86,7 +118,10 @@ export function useMemberGrowth() {
       return Object.entries(counts)
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([month, count]) => ({
-          month: new Date(month + '-01').toLocaleDateString('el-GR', { month: 'short', year: '2-digit' }),
+          month: new Date(month + '-01').toLocaleDateString('el-GR', {
+            month: 'short',
+            year: '2-digit',
+          }),
           count,
         }))
     },
@@ -134,10 +169,7 @@ export function useBulkUpdateUsers() {
       updates: Partial<Pick<ProfileRow, 'role' | 'membership_status'>>
     }) => {
       const supabase = createClient()
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .in('id', userIds)
+      const { error } = await supabase.from('profiles').update(updates).in('id', userIds)
       if (error) throw error
     },
     onSuccess: () => {
@@ -182,7 +214,9 @@ export function useModerationQueue() {
           id: b.id,
           name: b.name,
           created_at: b.created_at,
-          owner_name: owner ? `${(owner as { first_name: string }).first_name} ${(owner as { last_name: string }).last_name}` : '—',
+          owner_name: owner
+            ? `${(owner as { first_name: string }).first_name} ${(owner as { last_name: string }).last_name}`
+            : '—',
         })
       }
 
@@ -193,11 +227,469 @@ export function useModerationQueue() {
           id: s.id,
           name: s.title,
           created_at: s.created_at,
-          owner_name: author ? `${(author as { first_name: string }).first_name} ${(author as { last_name: string }).last_name}` : '—',
+          owner_name: author
+            ? `${(author as { first_name: string }).first_name} ${(author as { last_name: string }).last_name}`
+            : '—',
         })
       }
 
       return items.sort((a, b) => a.created_at.localeCompare(b.created_at))
+    },
+    staleTime: 15_000,
+  })
+}
+
+// ── Admin update single profile ───────────────────────────────────────────────
+
+export function useAdminUpdateProfile(id: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (
+      updates: Partial<Omit<ProfileRow, 'id' | 'created_at' | 'updated_at' | 'search_vector'>>
+    ) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('profiles').update(updates).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
+      queryClient.invalidateQueries({ queryKey: ['profile', id] })
+    },
+  })
+}
+
+// ── Admin single user ─────────────────────────────────────────────────────────
+
+export function useAdminUser(id: string) {
+  return useQuery({
+    queryKey: ['admin', 'user', id],
+    queryFn: async (): Promise<ProfileRow | null> => {
+      const supabase = createClient()
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single()
+      if (error) throw error
+      return data
+    },
+    enabled: !!id,
+  })
+}
+
+// ── Admin Announcements ───────────────────────────────────────────────────────
+
+export function useAdminAnnouncements() {
+  return useQuery({
+    queryKey: ['admin', 'announcements'],
+    queryFn: async (): Promise<AnnouncementRow[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminUpdateAnnouncement(id: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (updates: AnnouncementUpdate) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('announcements').update(updates).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      queryClient.invalidateQueries({ queryKey: ['announcements'] })
+    },
+  })
+}
+
+export function useAdminCreateAnnouncement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (values: AnnouncementInsert) => {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+      const { data, error } = await supabase
+        .from('announcements')
+        .insert({ ...values, created_by: user.id })
+        .select()
+        .single()
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      queryClient.invalidateQueries({ queryKey: ['announcements'] })
+    },
+  })
+}
+
+export function useAdminDeleteAnnouncement() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('announcements').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'announcements'] })
+      queryClient.invalidateQueries({ queryKey: ['announcements'] })
+    },
+  })
+}
+
+// ── Admin Polls ───────────────────────────────────────────────────────────────
+
+export type AdminPollWithOptions = PollRow & { poll_options: PollOptionRow[] }
+
+export function useAdminPolls() {
+  return useQuery({
+    queryKey: ['admin', 'polls'],
+    queryFn: async (): Promise<AdminPollWithOptions[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('polls')
+        .select('*, poll_options(*)')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data ?? []).map((p) => ({
+        ...p,
+        poll_options: (Array.isArray(p.poll_options) ? p.poll_options : []) as PollOptionRow[],
+      }))
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminCreatePoll() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({
+      poll,
+      options,
+    }: {
+      poll: Omit<PollInsert, 'created_by'>
+      options: Array<{ text: string; text_en?: string }>
+    }) => {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data: newPoll, error: pollError } = await supabase
+        .from('polls')
+        .insert({ ...poll, created_by: user.id })
+        .select()
+        .single()
+      if (pollError) throw pollError
+
+      const optionRows: PollOptionInsert[] = options.map((o, i) => ({
+        poll_id: newPoll.id,
+        text: o.text,
+        text_en: o.text_en ?? null,
+        position: i,
+      }))
+      const { error: optError } = await supabase.from('poll_options').insert(optionRows)
+      if (optError) throw optError
+      return newPoll
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'polls'] })
+      queryClient.invalidateQueries({ queryKey: ['polls'] })
+    },
+  })
+}
+
+export function useAdminClosePoll() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('polls').update({ is_active: false }).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'polls'] })
+      queryClient.invalidateQueries({ queryKey: ['polls'] })
+    },
+  })
+}
+
+export function useAdminDeletePoll() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('polls').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'polls'] })
+      queryClient.invalidateQueries({ queryKey: ['polls'] })
+    },
+  })
+}
+
+// ── Admin Success Stories ─────────────────────────────────────────────────────
+
+export function useAdminSuccessStories() {
+  return useQuery({
+    queryKey: ['admin', 'success_stories'],
+    queryFn: async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('success_stories')
+        .select('*, author:user_id(id, first_name, last_name)')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data ?? []).map((s) => ({
+        ...s,
+        author: Array.isArray(s.author) ? s.author[0] : s.author,
+      }))
+    },
+    staleTime: 15_000,
+  })
+}
+
+// ── Admin Events ──────────────────────────────────────────────────────────────
+
+export function useAdminEvents() {
+  return useQuery({
+    queryKey: ['admin', 'events'],
+    queryFn: async (): Promise<EventRow[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('events')
+        .select('*')
+        .order('start_date', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminUpdateEvent(id: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (updates: EventUpdate) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('events').update(updates).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+    },
+  })
+}
+
+export function useAdminDeleteEvent() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('events').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'events'] })
+      queryClient.invalidateQueries({ queryKey: ['events'] })
+    },
+  })
+}
+
+// ── Admin Jobs ────────────────────────────────────────────────────────────────
+
+export function useAdminJobs() {
+  return useQuery({
+    queryKey: ['admin', 'jobs'],
+    queryFn: async (): Promise<JobRow[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminUpdateJob(id: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (updates: JobUpdate) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('jobs').update(updates).eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'jobs'] })
+      queryClient.invalidateQueries({ queryKey: ['jobs'] })
+    },
+  })
+}
+
+export function useAdminDeleteJob() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('jobs').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'jobs'] })
+      queryClient.invalidateQueries({ queryKey: ['jobs'] })
+    },
+  })
+}
+
+// ── Admin Gallery ─────────────────────────────────────────────────────────────
+
+export function useAdminAlbums() {
+  return useQuery({
+    queryKey: ['admin', 'gallery_albums'],
+    queryFn: async (): Promise<GalleryAlbumRow[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('gallery_albums')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminPendingPhotos() {
+  return useQuery({
+    queryKey: ['admin', 'pending_photos'],
+    queryFn: async (): Promise<(GalleryPhotoRow & { album_title?: string })[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('gallery_photos')
+        .select('*, album:album_id(title)')
+        .eq('is_approved', false)
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return (data ?? []).map((p) => {
+        const album = Array.isArray(p.album) ? p.album[0] : p.album
+        return {
+          ...p,
+          album_title: album ? (album as { title: string }).title : undefined,
+        }
+      })
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useApprovePhoto() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('gallery_photos')
+        .update({ is_approved: true })
+        .eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pending_photos'] })
+      queryClient.invalidateQueries({ queryKey: ['gallery_photos'] })
+    },
+  })
+}
+
+export function useRejectPhoto() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('gallery_photos').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'pending_photos'] })
+      queryClient.invalidateQueries({ queryKey: ['gallery_photos'] })
+    },
+  })
+}
+
+export function useAdminDeleteAlbum() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('gallery_albums').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'gallery_albums'] })
+      queryClient.invalidateQueries({ queryKey: ['gallery_albums'] })
+    },
+  })
+}
+
+// ── Admin Groups ──────────────────────────────────────────────────────────────
+
+export function useAdminGroups() {
+  return useQuery({
+    queryKey: ['admin', 'groups'],
+    queryFn: async (): Promise<GroupRow[]> => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('groups')
+        .select('*')
+        .order('member_count', { ascending: false })
+      if (error) throw error
+      return data ?? []
+    },
+    staleTime: 15_000,
+  })
+}
+
+export function useAdminDeleteGroup() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const supabase = createClient()
+      const { error } = await supabase.from('groups').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'groups'] })
+      queryClient.invalidateQueries({ queryKey: ['groups'] })
+    },
+  })
+}
+
+// ── Admin Benefits ────────────────────────────────────────────────────────────
+
+export function useAdminBenefits() {
+  return useQuery({
+    queryKey: ['admin', 'benefits'],
+    queryFn: async () => {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('benefits')
+        .select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data ?? []
     },
     staleTime: 15_000,
   })

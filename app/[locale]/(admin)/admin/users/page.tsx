@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import { useAdminUsers, useBulkUpdateUsers } from '@/features/admin/hooks/useAdmin'
 import type { ProfileRow } from '@/lib/supabase/types'
 
@@ -18,6 +19,8 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export default function AdminUsersPage() {
+  const { locale } = useParams<{ locale: string }>()
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const { data: users, isLoading } = useAdminUsers(search)
@@ -53,7 +56,9 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">Διαχείριση Χρηστών</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Αναζήτηση, επαλήθευση και διαχείριση μελών</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Αναζήτηση, επαλήθευση και διαχείριση μελών
+        </p>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -62,7 +67,7 @@ export default function AdminUsersPage() {
           placeholder="Αναζήτηση ονόματος ή αρ. μέλους..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="h-9 flex-1 max-w-sm rounded-lg border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="h-9 max-w-sm flex-1 rounded-lg border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
 
         {selected.size > 0 && (
@@ -93,7 +98,7 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-border overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-border">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
@@ -125,12 +130,21 @@ export default function AdminUsersPage() {
               ))
             ) : users && users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id} className="hover:bg-muted/30 transition-colors">
+                <tr
+                  key={user.id}
+                  className="hover:bg-muted/30 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    // Don't navigate when clicking checkbox
+                    if ((e.target as HTMLElement).tagName === 'INPUT') return
+                    router.push(`/${locale}/admin/users/${user.id}`)
+                  }}
+                >
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
                       checked={selected.has(user.id)}
                       onChange={() => toggleSelect(user.id)}
+                      onClick={(e) => e.stopPropagation()}
                       className="rounded border-border"
                     />
                   </td>

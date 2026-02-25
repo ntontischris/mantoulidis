@@ -4,6 +4,12 @@ import Link from 'next/link'
 const adminNavItems = [
   { href: 'dashboard', label: 'Dashboard' },
   { href: 'users', label: 'Χρήστες' },
+  { href: 'news', label: 'Νέα & Polls' },
+  { href: 'benefits', label: 'Παροχές' },
+  { href: 'events', label: 'Εκδηλώσεις' },
+  { href: 'jobs', label: 'Αγγελίες' },
+  { href: 'gallery', label: 'Gallery' },
+  { href: 'groups', label: 'Ομάδες' },
   { href: 'moderation', label: 'Moderation' },
 ]
 
