@@ -19,14 +19,14 @@ export default async function AdminLayout({
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Admin sidebar */}
-      <aside className="hidden lg:flex w-56 shrink-0 flex-col border-r border-border bg-card">
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-border bg-card lg:flex">
         <div className="flex h-16 items-center gap-2 border-b border-border px-4">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive text-xs font-bold text-white">
             A
           </div>
-          <span className="font-semibold text-sm text-foreground">Admin Panel</span>
+          <span className="text-sm font-semibold text-foreground">Admin Panel</span>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 space-y-1 p-3">
           {adminNavItems.map((item) => (
             <Link
               key={item.href}
@@ -36,9 +36,9 @@ export default async function AdminLayout({
               {item.label}
             </Link>
           ))}
-          <div className="pt-3 border-t border-border">
+          <div className="border-t border-border pt-3">
             <Link
-              href={`/${locale}/dashboard`}
+              href={`/${locale}/dashboard/home`}
               className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               ← Dashboard
