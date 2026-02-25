@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { createClient } from '@/lib/supabase/client'
+import { useAuthStore } from '@/features/auth/store/authStore'
 import type {
   ProfileRow,
   AnnouncementRow,
@@ -20,6 +21,12 @@ import type {
   GroupRow,
 } from '@/lib/supabase/types'
 
+// ── Auth guard — ensures queries run only after session is initialized ────────
+
+function useIsAdminReady() {
+  return useAuthStore((s) => s.isInitialized)
+}
+
 // ── Platform stats ────────────────────────────────────────────────────────────
 
 export type PlatformStats = {
@@ -34,8 +41,10 @@ export type PlatformStats = {
 }
 
 export function usePlatformStats() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'stats'],
+    enabled: ready,
     queryFn: async (): Promise<PlatformStats> => {
       const supabase = createClient()
 
@@ -99,8 +108,10 @@ export function usePlatformStats() {
 export type MonthlyGrowth = { month: string; count: number }
 
 export function useMemberGrowth() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'member_growth'],
+    enabled: ready,
     queryFn: async (): Promise<MonthlyGrowth[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -134,8 +145,10 @@ export function useMemberGrowth() {
 // ── Users list ────────────────────────────────────────────────────────────────
 
 export function useAdminUsers(search = '') {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'users', search],
+    enabled: ready,
     queryFn: async (): Promise<ProfileRow[]> => {
       const supabase = createClient()
       let query = supabase
@@ -188,8 +201,10 @@ export type ModerationItem =
   | { type: 'story'; id: string; name: string; created_at: string; owner_name: string }
 
 export function useModerationQueue() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'moderation'],
+    enabled: ready,
     queryFn: async (): Promise<ModerationItem[]> => {
       const supabase = createClient()
 
@@ -263,23 +278,26 @@ export function useAdminUpdateProfile(id: string) {
 // ── Admin single user ─────────────────────────────────────────────────────────
 
 export function useAdminUser(id: string) {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'user', id],
+    enabled: ready && !!id,
     queryFn: async (): Promise<ProfileRow | null> => {
       const supabase = createClient()
       const { data, error } = await supabase.from('profiles').select('*').eq('id', id).single()
       if (error) throw error
       return data
     },
-    enabled: !!id,
   })
 }
 
 // ── Admin Announcements ───────────────────────────────────────────────────────
 
 export function useAdminAnnouncements() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'announcements'],
+    enabled: ready,
     queryFn: async (): Promise<AnnouncementRow[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -352,8 +370,10 @@ export function useAdminDeleteAnnouncement() {
 export type AdminPollWithOptions = PollRow & { poll_options: PollOptionRow[] }
 
 export function useAdminPolls() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'polls'],
+    enabled: ready,
     queryFn: async (): Promise<AdminPollWithOptions[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -443,8 +463,10 @@ export function useAdminDeletePoll() {
 // ── Admin Success Stories ─────────────────────────────────────────────────────
 
 export function useAdminSuccessStories() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'success_stories'],
+    enabled: ready,
     queryFn: async () => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -464,8 +486,10 @@ export function useAdminSuccessStories() {
 // ── Admin Events ──────────────────────────────────────────────────────────────
 
 export function useAdminEvents() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'events'],
+    enabled: ready,
     queryFn: async (): Promise<EventRow[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -512,8 +536,10 @@ export function useAdminDeleteEvent() {
 // ── Admin Jobs ────────────────────────────────────────────────────────────────
 
 export function useAdminJobs() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'jobs'],
+    enabled: ready,
     queryFn: async (): Promise<JobRow[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -560,8 +586,10 @@ export function useAdminDeleteJob() {
 // ── Admin Gallery ─────────────────────────────────────────────────────────────
 
 export function useAdminAlbums() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'gallery_albums'],
+    enabled: ready,
     queryFn: async (): Promise<GalleryAlbumRow[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -576,8 +604,10 @@ export function useAdminAlbums() {
 }
 
 export function useAdminPendingPhotos() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'pending_photos'],
+    enabled: ready,
     queryFn: async (): Promise<(GalleryPhotoRow & { album_title?: string })[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -649,8 +679,10 @@ export function useAdminDeleteAlbum() {
 // ── Admin Groups ──────────────────────────────────────────────────────────────
 
 export function useAdminGroups() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'groups'],
+    enabled: ready,
     queryFn: async (): Promise<GroupRow[]> => {
       const supabase = createClient()
       const { data, error } = await supabase
@@ -682,8 +714,10 @@ export function useAdminDeleteGroup() {
 // ── Admin Benefits ────────────────────────────────────────────────────────────
 
 export function useAdminBenefits() {
+  const ready = useIsAdminReady()
   return useQuery({
     queryKey: ['admin', 'benefits'],
+    enabled: ready,
     queryFn: async () => {
       const supabase = createClient()
       const { data, error } = await supabase
