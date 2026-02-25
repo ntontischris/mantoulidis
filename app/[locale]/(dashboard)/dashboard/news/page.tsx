@@ -35,7 +35,7 @@ export default function NewsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl bg-muted p-1 w-fit">
+      <div className="flex gap-1 overflow-x-auto rounded-xl bg-muted p-1 w-fit max-w-full">
         {tabs.map((t) => (
           <button
             key={t.id}

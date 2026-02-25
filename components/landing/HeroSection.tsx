@@ -39,9 +39,9 @@ export default function HeroSection({ locale, t }: HeroSectionProps) {
     >
       {/* Gradient mesh blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-blue-600/20 blur-[120px] animate-blob" />
-        <div className="absolute top-[10%] right-[-15%] w-[500px] h-[500px] rounded-full bg-[#E8B931]/10 blur-[100px] animate-blob-delay" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[400px] h-[400px] rounded-full bg-indigo-700/15 blur-[90px] animate-blob-delay2" />
+        <div className="absolute top-[-20%] left-[-10%] w-[300px] h-[300px] sm:w-[450px] sm:h-[450px] lg:w-[600px] lg:h-[600px] rounded-full bg-blue-600/20 blur-[120px] animate-blob" />
+        <div className="absolute top-[10%] right-[-15%] w-[250px] h-[250px] sm:w-[375px] sm:h-[375px] lg:w-[500px] lg:h-[500px] rounded-full bg-[#E8B931]/10 blur-[100px] animate-blob-delay" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[200px] h-[200px] sm:w-[300px] sm:h-[300px] lg:w-[400px] lg:h-[400px] rounded-full bg-indigo-700/15 blur-[90px] animate-blob-delay2" />
       </div>
 
       {/* Subtle grid */}

@@ -84,12 +84,12 @@ export default function AdminNewsPage() {
         </p>
       </div>
 
-      <div className="flex gap-1 border-b border-border">
+      <div className="flex gap-1 overflow-x-auto border-b border-border">
         {TABS.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className={`px-4 py-2 text-sm font-medium transition-colors ${
+            className={`whitespace-nowrap px-4 py-2 text-sm font-medium transition-colors ${
               tab === t.id
                 ? 'border-b-2 border-primary text-primary'
                 : 'text-muted-foreground hover:text-foreground'
@@ -115,8 +115,8 @@ export default function AdminNewsPage() {
           {loadingAnnouncements ? (
             <SkeletonRows />
           ) : (
-            <div className="overflow-hidden rounded-xl border border-border">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-border">
+              <table className="w-full min-w-[600px] text-sm">
                 <thead className="bg-muted/50">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium text-muted-foreground">
@@ -179,8 +179,8 @@ export default function AdminNewsPage() {
           {loadingPolls ? (
             <SkeletonRows />
           ) : (
-            <div className="overflow-hidden rounded-xl border border-border">
-              <table className="w-full text-sm">
+            <div className="overflow-x-auto rounded-xl border border-border">
+              <table className="w-full min-w-[600px] text-sm">
                 <thead className="bg-muted/50">
                   <tr>
                     <th className="px-4 py-3 text-left font-medium text-muted-foreground">
@@ -343,8 +343,8 @@ function StoriesTable({
   return (
     <div>
       <h3 className="mb-3 text-sm font-semibold text-foreground">{title}</h3>
-      <div className="overflow-hidden rounded-xl border border-border">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-xl border border-border">
+        <table className="w-full min-w-[500px] text-sm">
           <thead className="bg-muted/50">
             <tr>
               <th className="px-4 py-3 text-left font-medium text-muted-foreground">Τίτλος</th>
@@ -451,9 +451,9 @@ function AdminModal({
   onClose: () => void
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-border bg-card shadow-xl">
-        <div className="flex items-center justify-between border-b border-border px-6 py-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-border bg-card shadow-xl">
+        <div className="flex items-center justify-between border-b border-border px-4 sm:px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">{title}</h2>
           <button
             onClick={onClose}
@@ -462,7 +462,7 @@ function AdminModal({
             ✕
           </button>
         </div>
-        <div className="px-6 py-5">{children}</div>
+        <div className="px-4 sm:px-6 py-5">{children}</div>
       </div>
     </div>
   )

@@ -60,9 +60,9 @@ export default async function MemberProfilePage({ params }: MemberProfilePagePro
       </div>
 
       <div className="pt-10 space-y-2">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{fullName}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{fullName}</h1>
             {fullNameEn && <p className="text-muted-foreground">{fullNameEn}</p>}
             {profile.current_position && (
               <p className="text-muted-foreground mt-0.5">
@@ -117,7 +117,7 @@ export default async function MemberProfilePage({ params }: MemberProfilePagePro
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
             {profile.department && (
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Τμήμα</p>

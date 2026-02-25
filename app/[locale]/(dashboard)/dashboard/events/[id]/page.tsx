@@ -80,8 +80,8 @@ export default async function EventDetailPage({ params }: EventDetailPageProps) 
           )}
         </div>
 
-        <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl font-bold text-foreground">{event.title}</h1>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{event.title}</h1>
           {isOwner && (
             <Button asChild size="sm" variant="outline" className="shrink-0">
               <Link href={`/${locale}/dashboard/events/${id}/edit`}>Επεξεργασία</Link>

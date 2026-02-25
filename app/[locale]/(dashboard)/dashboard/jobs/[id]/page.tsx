@@ -53,10 +53,10 @@ export default function JobDetailPage() {
       </Link>
 
       {/* Header card */}
-      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{title}</h1>
             <p className="mt-1 text-lg text-muted-foreground">{job.company}</p>
           </div>
           <SavedJobButton jobId={job.id} isSaved={job.is_saved ?? false} />

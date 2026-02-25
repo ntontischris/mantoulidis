@@ -98,8 +98,8 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border">
-        <table className="w-full text-sm">
+      <div className="overflow-x-auto rounded-xl border border-border">
+        <table className="w-full min-w-[700px] text-sm">
           <thead className="bg-muted/50">
             <tr>
               <th className="w-10 px-4 py-3 text-left">

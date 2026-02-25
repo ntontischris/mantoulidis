@@ -22,7 +22,7 @@ export default function AdminBenefitsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Διαχείριση Παροχών</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -31,7 +31,7 @@ export default function AdminBenefitsPage() {
         </div>
         <button
           onClick={() => router.push(`/${locale}/dashboard/benefits/new`)}
-          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          className="w-fit rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
           + Νέα Παροχή
         </button>
@@ -44,8 +44,8 @@ export default function AdminBenefitsPage() {
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-border">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full min-w-[800px] text-sm">
             <thead className="bg-muted/50">
               <tr>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Τίτλος</th>

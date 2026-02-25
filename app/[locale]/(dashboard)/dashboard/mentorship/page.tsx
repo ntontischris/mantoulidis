@@ -50,8 +50,8 @@ export default function MentorshipPage() {
 
       {/* Request form overlay */}
       {showForm && selectedMentor && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
+          <div className="w-full max-w-md rounded-t-2xl sm:rounded-2xl bg-card p-4 sm:p-6 shadow-xl">
             <h2 className="mb-4 text-lg font-bold text-foreground">Αίτηση Mentorship</h2>
             <MentorshipRequestForm
               mentor={selectedMentor}

@@ -62,9 +62,9 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
       <div className="pt-8 space-y-6">
         {/* Name & status */}
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-foreground">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
               {profile.first_name} {profile.last_name}
             </h2>
             {(profile.first_name_en || profile.last_name_en) && (
@@ -79,7 +79,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
               </p>
             )}
           </div>
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-wrap gap-2 sm:flex-col sm:items-end">
             <Badge variant={statusBadge[profile.membership_status] ?? 'secondary'}>
               {profile.membership_status === 'active' ? 'Ενεργό' :
                profile.membership_status === 'inactive' ? 'Ανενεργό' : 'Ανασταλμένο'}
@@ -93,7 +93,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
         <Separator />
 
         {/* Info grid */}
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
           {profile.graduation_year && (
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Έτος αποφοίτησης</p>
