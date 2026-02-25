@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/features/auth/store/authStore'
 
 interface NavItem {
   href: string
@@ -36,6 +37,8 @@ function NavLink({ href, label, icon }: NavItem) {
 export function Sidebar({ locale }: { locale: string }) {
   const t = useTranslations('nav')
   const base = `/${locale}/dashboard`
+  const profile = useAuthStore((s) => s.profile)
+  const isSuperAdmin = profile?.role === 'super_admin'
 
   const navItems: NavItem[] = [
     { href: `${base}/home`, label: t('home'), icon: '🏠' },
@@ -76,6 +79,17 @@ export function Sidebar({ locale }: { locale: string }) {
       <div className="border-t border-border p-4">
         <NavLink href={`/${locale}/dashboard/profile`} label={t('profile')} icon="👤" />
         <NavLink href={`/${locale}/settings`} label={t('settings')} icon="⚙️" />
+        {isSuperAdmin && (
+          <Link
+            href={`/${locale}/admin/dashboard`}
+            className="mt-3 flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/20"
+          >
+            <span className="text-base" aria-hidden>
+              🛡️
+            </span>
+            Admin Panel
+          </Link>
+        )}
       </div>
     </aside>
   )
