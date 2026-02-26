@@ -41,8 +41,8 @@ export default function GroupDetailPage() {
       </Link>
 
       {/* Header */}
-      <div className="rounded-2xl border border-border bg-card p-4 sm:p-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <div className="rounded-2xl border border-border bg-card p-6">
+        <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-foreground">{name}</h1>

@@ -40,7 +40,7 @@ export function NotificationBell() {
             className="fixed inset-0 z-40"
             onClick={() => setOpen(false)}
           />
-          <div className="absolute right-0 top-10 z-50 w-[calc(100vw-2rem)] max-w-80 rounded-xl border border-border bg-background shadow-lg overflow-hidden sm:w-80">
+          <div className="absolute right-0 top-10 z-50 w-80 rounded-xl border border-border bg-background shadow-lg overflow-hidden">
             <NotificationList />
           </div>
         </>

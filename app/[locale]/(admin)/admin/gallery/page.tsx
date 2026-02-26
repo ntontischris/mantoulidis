@@ -21,14 +21,14 @@ export default function AdminGalleryPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Διαχείριση Gallery</h1>
           <p className="mt-1 text-sm text-muted-foreground">Albums και έγκριση φωτογραφιών</p>
         </div>
         <button
           onClick={() => router.push(`/${locale}/dashboard/gallery/new`)}
-          className="w-fit rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
           + Νέο Album
         </button>
@@ -107,8 +107,8 @@ export default function AdminGalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border">
-            <table className="w-full min-w-[600px] text-sm">
+          <div className="overflow-hidden rounded-xl border border-border">
+            <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Τίτλος</th>

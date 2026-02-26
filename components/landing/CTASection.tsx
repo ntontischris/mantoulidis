@@ -18,8 +18,8 @@ export default function CTASection({ locale, t }: CTASectionProps) {
     <section className="bg-[#0A1628] landing-section relative overflow-hidden">
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-30%] left-[20%] w-[250px] h-[250px] sm:w-[375px] sm:h-[375px] lg:w-[500px] lg:h-[500px] rounded-full bg-[#E8B931]/8 blur-[120px]" />
-        <div className="absolute bottom-[-20%] right-[10%] w-[200px] h-[200px] sm:w-[300px] sm:h-[300px] lg:w-[400px] lg:h-[400px] rounded-full bg-blue-600/10 blur-[100px]" />
+        <div className="absolute top-[-30%] left-[20%] w-[500px] h-[500px] rounded-full bg-[#E8B931]/8 blur-[120px]" />
+        <div className="absolute bottom-[-20%] right-[10%] w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[100px]" />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">

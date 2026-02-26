@@ -42,8 +42,8 @@ export default async function BusinessDetailPage({ params }: BusinessDetailPageP
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       {/* Header */}
-      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-6">
-        <div className="flex h-20 w-20 sm:h-24 sm:w-24 shrink-0 items-center justify-center rounded-2xl bg-muted text-4xl overflow-hidden">
+      <div className="flex items-start gap-6">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-muted text-4xl overflow-hidden">
           {business.logo_url ? (
             <Image
               src={business.logo_url}
@@ -94,7 +94,7 @@ export default async function BusinessDetailPage({ params }: BusinessDetailPageP
       )}
 
       {/* Contact */}
-      <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-4 text-sm">
         {business.website_url && (
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Website</p>

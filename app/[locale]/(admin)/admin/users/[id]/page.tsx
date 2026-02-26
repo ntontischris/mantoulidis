@@ -182,7 +182,7 @@ function AdminUserForm({
   return (
     <form onSubmit={handleSubmit(handleSubmitForm)} className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+      <div className="flex items-start justify-between">
         <div>
           <button
             type="button"
@@ -191,7 +191,7 @@ function AdminUserForm({
           >
             ← Πίσω στους χρήστες
           </button>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground">
             {profile.first_name} {profile.last_name}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -199,7 +199,7 @@ function AdminUserForm({
             {new Date(profile.created_at).toLocaleDateString('el-GR')}
           </p>
         </div>
-        <Button type="submit" disabled={isPending} className="w-fit">
+        <Button type="submit" disabled={isPending}>
           {isPending ? 'Αποθήκευση...' : 'Αποθήκευση'}
         </Button>
       </div>
@@ -323,7 +323,7 @@ function AdminUserForm({
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="space-y-4 rounded-xl border border-border bg-card p-4 sm:p-6">
+    <div className="space-y-4 rounded-xl border border-border bg-card p-6">
       <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground">{title}</h2>
       {children}
     </div>
