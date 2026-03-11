@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { useAuthStore } from '@/features/auth/store/authStore'
+import { useSignOut } from '@/features/auth/hooks/useSignOut'
 
 interface NavItem {
   href: string
@@ -36,6 +38,9 @@ function NavLink({ href, label, icon }: NavItem) {
 export function Sidebar({ locale }: { locale: string }) {
   const t = useTranslations('nav')
   const base = `/${locale}/dashboard`
+  const profile = useAuthStore((s) => s.profile)
+  const isSuperAdmin = profile?.role === 'super_admin'
+  const { signOut, isPending } = useSignOut(locale)
 
   const navItems: NavItem[] = [
     { href: `${base}/home`, label: t('home'), icon: '🏠' },
@@ -73,9 +78,39 @@ export function Sidebar({ locale }: { locale: string }) {
       </nav>
 
       {/* Profile section */}
-      <div className="border-t border-border p-4">
+      <div className="space-y-1 border-t border-border p-4">
         <NavLink href={`/${locale}/dashboard/profile`} label={t('profile')} icon="👤" />
         <NavLink href={`/${locale}/settings`} label={t('settings')} icon="⚙️" />
+        {isSuperAdmin && (
+          <Link
+            href={`/${locale}/admin/dashboard`}
+            className="flex items-center gap-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm font-semibold text-destructive transition-colors hover:bg-destructive/20"
+          >
+            <span className="text-base" aria-hidden>
+              🛡️
+            </span>
+            Admin Panel
+          </Link>
+        )}
+        <Link
+          href={`/${locale}`}
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+        >
+          <span className="text-base" aria-hidden>
+            🏛️
+          </span>
+          Αρχική Σελίδα
+        </Link>
+        <button
+          onClick={signOut}
+          disabled={isPending}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+        >
+          <span className="text-base" aria-hidden>
+            🚪
+          </span>
+          {isPending ? 'Αποσύνδεση...' : 'Αποσύνδεση'}
+        </button>
       </div>
     </aside>
   )

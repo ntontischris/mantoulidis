@@ -16,12 +16,16 @@ export function useSignOut(locale: string) {
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
+    } catch {
+      // ignore sign-out errors — clear state and redirect anyway
+    } finally {
       reset()
-      resetAnalytics()
+      try {
+        resetAnalytics()
+      } catch {}
+      setIsPending(false)
       router.push(`/${locale}/login`)
       router.refresh()
-    } finally {
-      setIsPending(false)
     }
   }
 
