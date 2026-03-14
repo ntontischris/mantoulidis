@@ -1,40 +1,40 @@
-'use client'
-
-import { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
-import { useBenefit, useMyRedemption } from '@/features/benefits/hooks/useBenefits'
-import { BenefitRedeemModal } from '@/features/benefits/components/BenefitRedeemModal'
+import { createClient } from '@/lib/supabase/server'
 import { BenefitCountdown } from '@/features/benefits/components/BenefitCountdown'
-import { useAuth } from '@/features/auth/hooks/useAuth'
+import { BenefitRedeemSection } from '@/features/benefits/components/BenefitRedeemSection'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
 import { BENEFIT_CATEGORIES } from '@/features/benefits/types'
 
-export default function BenefitDetailPage() {
-  const { id } = useParams<{ locale: string; id: string }>()
-  const { profile } = useAuth()
-  const { data: benefit, isLoading } = useBenefit(id)
-  const { data: myRedemption } = useMyRedemption(id)
-  const [modalOpen, setModalOpen] = useState(false)
+export default async function BenefitDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>
+}) {
+  const { locale, id } = await params
+  const supabase = await createClient()
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-16">
-        <LoadingSpinner />
-      </div>
-    )
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect(`/${locale}/login`)
 
-  if (!benefit) {
-    return (
-      <div className="py-16 text-center text-sm text-muted-foreground">
-        Η παροχή δεν βρέθηκε.
-      </div>
-    )
-  }
+  const { data: benefit } = await supabase.from('benefits').select('*').eq('id', id).single()
+  if (!benefit) notFound()
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  const { data: myRedemption } = await supabase
+    .from('benefit_redemptions')
+    .select('*')
+    .eq('benefit_id', id)
+    .eq('user_id', user.id)
+    .maybeSingle()
 
   const canRedeem =
     !benefit.requires_verified_member ||
@@ -42,13 +42,10 @@ export default function BenefitDetailPage() {
     profile?.role === 'admin' ||
     profile?.role === 'super_admin'
 
-  const isExpired = benefit.valid_until
-    ? new Date(benefit.valid_until) < new Date()
-    : false
+  const isExpired = benefit.valid_until ? new Date(benefit.valid_until) < new Date() : false
 
   const isFullyRedeemed =
-    benefit.max_redemptions !== null &&
-    benefit.redemption_count >= benefit.max_redemptions
+    benefit.max_redemptions !== null && benefit.redemption_count >= benefit.max_redemptions
 
   const categoryLabel =
     BENEFIT_CATEGORIES.find((c) => c.value === benefit.category)?.label ?? benefit.category
@@ -57,7 +54,7 @@ export default function BenefitDetailPage() {
     <div className="mx-auto max-w-2xl space-y-8">
       {/* Header */}
       <div className="flex items-start gap-6">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-muted overflow-hidden">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-muted">
           {benefit.partner_logo_url ? (
             <Image
               src={benefit.partner_logo_url}
@@ -94,26 +91,26 @@ export default function BenefitDetailPage() {
       {/* Description */}
       {benefit.description && (
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Περιγραφή
           </h2>
-          <p className="text-sm text-foreground whitespace-pre-wrap">{benefit.description}</p>
+          <p className="whitespace-pre-wrap text-sm text-foreground">{benefit.description}</p>
         </div>
       )}
 
       {/* Terms */}
       {benefit.terms && (
         <div>
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
             Όροι & Προϋποθέσεις
           </h2>
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">{benefit.terms}</p>
+          <p className="whitespace-pre-wrap text-sm text-muted-foreground">{benefit.terms}</p>
         </div>
       )}
 
       {/* Stats */}
       {benefit.max_redemptions !== null && (
-        <div className="rounded-xl border border-border bg-muted/40 p-4">
+        <div className="bg-muted/40 rounded-xl border border-border p-4">
           <p className="text-sm text-muted-foreground">
             Εξαργυρώσεις:{' '}
             <span className="font-semibold text-foreground">
@@ -123,47 +120,14 @@ export default function BenefitDetailPage() {
         </div>
       )}
 
-      {/* Redeem CTA */}
-      <div className="flex flex-col gap-3">
-        {myRedemption ? (
-          <Button onClick={() => setModalOpen(true)} variant="outline" className="w-full">
-            Εμφάνιση QR κώδικα
-          </Button>
-        ) : !canRedeem ? (
-          <div className="rounded-xl border border-border bg-muted/40 p-4 text-sm text-muted-foreground text-center">
-            Μόνο επαληθευμένα μέλη μπορούν να εξαργυρώσουν αυτή την παροχή.
-          </div>
-        ) : isExpired ? (
-          <Button disabled className="w-full">
-            Έχει λήξει
-          </Button>
-        ) : isFullyRedeemed ? (
-          <Button disabled className="w-full">
-            Εξαντλήθηκε
-          </Button>
-        ) : (
-          <Button onClick={() => setModalOpen(true)} className="w-full">
-            Εξαργύρωση παροχής
-          </Button>
-        )}
-
-        {benefit.redemption_url && (
-          <Button variant="outline" asChild className="w-full">
-            <a href={benefit.redemption_url} target="_blank" rel="noopener noreferrer">
-              Επίσκεψη ιστοσελίδας συνεργάτη
-            </a>
-          </Button>
-        )}
-      </div>
-
-      {/* Redeem modal */}
-      {modalOpen && (
-        <BenefitRedeemModal
-          benefit={benefit}
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-        />
-      )}
+      {/* Redeem CTA (client component) */}
+      <BenefitRedeemSection
+        benefit={benefit}
+        hasRedemption={!!myRedemption}
+        canRedeem={canRedeem}
+        isExpired={isExpired}
+        isFullyRedeemed={isFullyRedeemed}
+      />
     </div>
   )
 }

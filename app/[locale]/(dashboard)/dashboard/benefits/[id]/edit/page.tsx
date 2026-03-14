@@ -1,60 +1,23 @@
-'use client'
+import { redirect, notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { EditBenefitPageClient } from '@/features/benefits/components/EditBenefitPageClient'
 
-import { useParams, useRouter } from 'next/navigation'
-import { useBenefit, useUpdateBenefit } from '@/features/benefits/hooks/useBenefits'
-import { BenefitForm, benefitRowToFormValues } from '@/features/benefits/components/BenefitForm'
-import { PageHeader } from '@/components/shared/PageHeader'
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner'
-import type { BenefitFormValues } from '@/features/benefits/components/BenefitForm'
+interface PageProps {
+  params: Promise<{ locale: string; id: string }>
+}
 
-export default function EditBenefitPage() {
-  const { id, locale } = useParams<{ id: string; locale: string }>()
-  const router = useRouter()
-  const { data: benefit, isLoading } = useBenefit(id)
-  const { mutateAsync, isPending } = useUpdateBenefit(id)
+export default async function EditBenefitPage({ params }: PageProps) {
+  const { locale, id } = await params
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (isLoading) return <LoadingSpinner />
+  if (!user) redirect(`/${locale}/login`)
 
-  if (!benefit) {
-    return (
-      <div className="py-16 text-center text-sm text-muted-foreground">Η παροχή δεν βρέθηκε.</div>
-    )
-  }
+  const { data: benefit } = await supabase.from('benefits').select('*').eq('id', id).single()
 
-  async function handleSubmit(values: BenefitFormValues) {
-    await mutateAsync({
-      title: values.title,
-      title_en: values.title_en || null,
-      description: values.description || null,
-      description_en: values.description_en || null,
-      category: values.category,
-      partner_name: values.partner_name,
-      partner_logo_url: values.partner_logo_url || null,
-      discount_text: values.discount_text || null,
-      terms: values.terms || null,
-      terms_en: values.terms_en || null,
-      redemption_code: values.redemption_code || null,
-      redemption_url: values.redemption_url || null,
-      valid_from: values.valid_from,
-      valid_until: values.valid_until || null,
-      max_redemptions: values.max_redemptions ? parseInt(values.max_redemptions) : null,
-      is_active: values.is_active,
-      requires_verified_member: values.requires_verified_member,
-    })
-    router.push(`/${locale}/dashboard/benefits/${id}`)
-  }
+  if (!benefit) notFound()
 
-  return (
-    <div className="mx-auto max-w-2xl space-y-8">
-      <PageHeader title="Επεξεργασία Παροχής" subtitle={benefit.title} />
-      <div className="rounded-2xl border border-border bg-card p-6">
-        <BenefitForm
-          defaultValues={benefitRowToFormValues(benefit)}
-          onSubmit={handleSubmit}
-          isPending={isPending}
-          submitLabel="Αποθήκευση αλλαγών"
-        />
-      </div>
-    </div>
-  )
+  return <EditBenefitPageClient locale={locale} id={id} benefit={benefit} />
 }

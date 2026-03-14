@@ -1,42 +1,44 @@
-'use client'
-
-import { useParams } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { useGroup, useJoinGroup } from '@/features/groups/hooks/useGroups'
+import { createClient } from '@/lib/supabase/server'
+import { JoinGroupButton } from '@/features/groups/components/JoinGroupButton'
 import { GroupFeed } from '@/features/groups/components/GroupFeed'
 
-export default function GroupDetailPage() {
-  const { locale, id } = useParams<{ locale: string; id: string }>()
-  const { data: group, isLoading } = useGroup(id)
-  const { mutate: toggleJoin, isPending } = useJoinGroup()
+export default async function GroupDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>
+}) {
+  const { locale, id } = await params
+  const supabase = await createClient()
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 p-4 lg:p-6">
-        <div className="h-8 w-1/2 animate-pulse rounded-lg bg-muted" />
-        <div className="h-4 w-1/3 animate-pulse rounded-lg bg-muted" />
-      </div>
-    )
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect(`/${locale}/login`)
 
-  if (!group) {
-    return (
-      <div className="flex h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
-        <p className="text-4xl">👥</p>
-        <p>Η ομάδα δεν βρέθηκε</p>
-        <Link href={`/${locale}/dashboard/groups`} className="text-sm text-primary hover:underline">
-          ← Πίσω στις ομάδες
-        </Link>
-      </div>
-    )
-  }
+  const { data: group } = await supabase.from('groups').select('*').eq('id', id).single()
+  if (!group) notFound()
+
+  const { data: membership } = await supabase
+    .from('group_members')
+    .select('role')
+    .eq('group_id', id)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  const isMember = !!membership
 
   const name = locale === 'en' && group.name_en ? group.name_en : group.name
-  const description = locale === 'en' && group.description_en ? group.description_en : group.description
+  const description =
+    locale === 'en' && group.description_en ? group.description_en : group.description
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-6">
-      <Link href={`/${locale}/dashboard/groups`} className="text-sm text-muted-foreground hover:text-foreground">
+      <Link
+        href={`/${locale}/dashboard/groups`}
+        className="text-sm text-muted-foreground hover:text-foreground"
+      >
         ← Πίσω στις ομάδες
       </Link>
 
@@ -52,31 +54,18 @@ export default function GroupDetailPage() {
                 </span>
               )}
             </div>
-            {description && (
-              <p className="text-sm text-muted-foreground">{description}</p>
-            )}
+            {description && <p className="text-sm text-muted-foreground">{description}</p>}
             <p className="text-xs text-muted-foreground">
               {group.member_count} {group.member_count === 1 ? 'μέλος' : 'μέλη'}
             </p>
           </div>
-          <button
-            type="button"
-            disabled={isPending}
-            onClick={() => toggleJoin({ groupId: group.id, join: !group.is_member })}
-            className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50 ${
-              group.is_member
-                ? 'border border-border hover:bg-muted text-muted-foreground'
-                : 'bg-primary text-primary-foreground hover:opacity-90'
-            }`}
-          >
-            {group.is_member ? 'Αποχώρηση' : 'Συμμετοχή'}
-          </button>
+          <JoinGroupButton groupId={group.id} isMember={isMember} />
         </div>
       </div>
 
       {/* Feed */}
-      {group.is_member || !group.is_private ? (
-        <GroupFeed groupId={group.id} isMember={group.is_member} />
+      {isMember || !group.is_private ? (
+        <GroupFeed groupId={group.id} isMember={isMember} />
       ) : (
         <div className="rounded-xl border border-dashed border-border py-12 text-center text-sm text-muted-foreground">
           🔒 Αυτή είναι ιδιωτική ομάδα. Γίνετε μέλος για να δείτε τις αναρτήσεις.
