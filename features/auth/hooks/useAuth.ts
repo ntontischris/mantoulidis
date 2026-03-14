@@ -9,8 +9,7 @@ import { useAuthStore } from '../store/authStore'
  * Call once at the root layout level.
  */
 export function useAuthInit() {
-  const { setUser, setSession, setProfile, setLoading, setInitialized, reset } =
-    useAuthStore()
+  const { setUser, setSession, setProfile, setLoading, setInitialized, reset } = useAuthStore()
 
   useEffect(() => {
     const supabase = createClient()
