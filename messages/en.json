@@ -301,6 +301,13 @@
       "upcomingEvents": "Upcoming Events",
       "latestNews": "Latest News",
       "spotlight": "Alumni Spotlight"
+    },
+    "viewAll": "View all",
+    "empty": {
+      "events": "No upcoming events",
+      "benefits": "No active benefits",
+      "news": "No announcements yet",
+      "spotlight": "No stories yet"
     }
   },
   "landing": {

@@ -1,73 +1,73 @@
-'use client'
-
-import { useParams, useRouter } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import { useJob, useDeleteJob } from '@/features/jobs/hooks/useJobs'
+import { createClient } from '@/lib/supabase/server'
 import { SavedJobButton } from '@/features/jobs/components/SavedJobButton'
+import { DeleteJobButton } from '@/features/jobs/components/DeleteJobButton'
 import { JOB_TYPE_LABELS } from '@/features/jobs/types'
 
-export default function JobDetailPage() {
-  const { locale, id } = useParams<{ locale: string; id: string }>()
-  const router = useRouter()
-  const { data: job, isLoading } = useJob(id)
-  const { mutate: deleteJob, isPending: isDeleting } = useDeleteJob()
+export default async function JobDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>
+}) {
+  const { locale, id } = await params
+  const supabase = await createClient()
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 p-4 lg:p-6">
-        <div className="h-8 w-1/2 animate-pulse rounded-lg bg-muted" />
-        <div className="h-4 w-1/3 animate-pulse rounded-lg bg-muted" />
-        <div className="mt-6 h-40 animate-pulse rounded-xl bg-muted" />
-      </div>
-    )
-  }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect(`/${locale}/login`)
 
-  if (!job) {
-    return (
-      <div className="flex h-64 flex-col items-center justify-center gap-3 text-muted-foreground">
-        <p className="text-4xl">💼</p>
-        <p>Η αγγελία δεν βρέθηκε</p>
-        <Link href={`/${locale}/dashboard/jobs`} className="text-sm text-primary hover:underline">
-          ← Πίσω στις αγγελίες
-        </Link>
-      </div>
-    )
-  }
+  const { data: jobData } = await supabase
+    .from('jobs')
+    .select('*, poster:posted_by(id, first_name, last_name, avatar_url)')
+    .eq('id', id)
+    .single()
+  if (!jobData) notFound()
 
-  const title = locale === 'en' && job.title_en ? job.title_en : job.title
-  const description = locale === 'en' && job.description_en ? job.description_en : job.description
-  const isExpired = job.expires_at ? new Date(job.expires_at) < new Date() : false
+  const poster = Array.isArray(jobData.poster) ? jobData.poster[0] : jobData.poster
 
-  function handleDelete() {
-    if (!confirm('Να διαγραφεί η αγγελία;')) return
-    deleteJob(job!.id, {
-      onSuccess: () => router.push(`/${locale}/dashboard/jobs`),
-    })
-  }
+  const { data: savedRow } = await supabase
+    .from('saved_jobs')
+    .select('job_id')
+    .eq('user_id', user.id)
+    .eq('job_id', id)
+    .maybeSingle()
+
+  const isSaved = !!savedRow
+  const isOwner = user.id === jobData.posted_by
+
+  const title = locale === 'en' && jobData.title_en ? jobData.title_en : jobData.title
+  const description =
+    locale === 'en' && jobData.description_en ? jobData.description_en : jobData.description
+  const isExpired = jobData.expires_at ? new Date(jobData.expires_at) < new Date() : false
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 p-4 lg:p-6">
       {/* Back link */}
-      <Link href={`/${locale}/dashboard/jobs`} className="text-sm text-muted-foreground hover:text-foreground">
+      <Link
+        href={`/${locale}/dashboard/jobs`}
+        className="text-sm text-muted-foreground hover:text-foreground"
+      >
         ← Πίσω στις αγγελίες
       </Link>
 
       {/* Header card */}
-      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+      <div className="space-y-4 rounded-2xl border border-border bg-card p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-            <p className="mt-1 text-lg text-muted-foreground">{job.company}</p>
+            <p className="mt-1 text-lg text-muted-foreground">{jobData.company}</p>
           </div>
-          <SavedJobButton jobId={job.id} isSaved={job.is_saved ?? false} />
+          <SavedJobButton jobId={jobData.id} isSaved={isSaved} />
         </div>
 
         {/* Badges */}
         <div className="flex flex-wrap gap-2">
           <span className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
-            {JOB_TYPE_LABELS[job.type]}
+            {JOB_TYPE_LABELS[jobData.type]}
           </span>
-          {job.is_remote && (
+          {jobData.is_remote && (
             <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
               Remote
             </span>
@@ -80,39 +80,41 @@ export default function JobDetailPage() {
         </div>
 
         {/* Meta info */}
-        <dl className="grid gap-2 sm:grid-cols-2 text-sm">
-          {job.location && (
+        <dl className="grid gap-2 text-sm sm:grid-cols-2">
+          {jobData.location && (
             <div>
               <dt className="text-muted-foreground">Τοποθεσία</dt>
-              <dd className="font-medium">📍 {job.location}</dd>
+              <dd className="font-medium">📍 {jobData.location}</dd>
             </div>
           )}
-          {job.salary_range && (
+          {jobData.salary_range && (
             <div>
               <dt className="text-muted-foreground">Αμοιβή</dt>
-              <dd className="font-medium">💰 {job.salary_range}</dd>
+              <dd className="font-medium">💰 {jobData.salary_range}</dd>
             </div>
           )}
-          {job.industry && (
+          {jobData.industry && (
             <div>
               <dt className="text-muted-foreground">Κλάδος</dt>
-              <dd className="font-medium">{job.industry}</dd>
+              <dd className="font-medium">{jobData.industry}</dd>
             </div>
           )}
-          {job.expires_at && (
+          {jobData.expires_at && (
             <div>
               <dt className="text-muted-foreground">Λήξη</dt>
-              <dd className="font-medium">{new Date(job.expires_at).toLocaleDateString('el-GR')}</dd>
+              <dd className="font-medium">
+                {new Date(jobData.expires_at).toLocaleDateString('el-GR')}
+              </dd>
             </div>
           )}
         </dl>
 
         {/* Apply buttons */}
-        {(job.apply_url || job.apply_email) && (
-          <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
-            {job.apply_url && (
+        {(jobData.apply_url || jobData.apply_email) && (
+          <div className="flex flex-wrap gap-3 border-t border-border pt-2">
+            {jobData.apply_url && (
               <a
-                href={job.apply_url}
+                href={jobData.apply_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground hover:opacity-90"
@@ -120,12 +122,12 @@ export default function JobDetailPage() {
                 Υποβολή αίτησης →
               </a>
             )}
-            {job.apply_email && (
+            {jobData.apply_email && (
               <a
-                href={`mailto:${job.apply_email}`}
+                href={`mailto:${jobData.apply_email}`}
                 className="rounded-lg border border-border px-5 py-2 text-sm font-semibold hover:bg-muted"
               >
-                ✉️ {job.apply_email}
+                ✉️ {jobData.apply_email}
               </a>
             )}
           </div>
@@ -143,15 +145,17 @@ export default function JobDetailPage() {
       )}
 
       {/* Posted by */}
-      {job.poster && (
-        <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-3">
+      {poster && (
+        <div className="flex items-center gap-3 rounded-2xl border border-border bg-card p-5">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground">
-            {job.poster.first_name[0]}
+            {poster.first_name[0]}
           </div>
           <div>
-            <p className="text-sm font-medium">{job.poster.first_name} {job.poster.last_name}</p>
+            <p className="text-sm font-medium">
+              {poster.first_name} {poster.last_name}
+            </p>
             <Link
-              href={`/${locale}/dashboard/directory/${job.poster.id}`}
+              href={`/${locale}/dashboard/directory/${poster.id}`}
               className="text-xs text-primary hover:underline"
             >
               Προβολή προφίλ
@@ -161,15 +165,11 @@ export default function JobDetailPage() {
       )}
 
       {/* Owner actions */}
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={handleDelete}
-          disabled={isDeleting}
-          className="rounded-lg border border-destructive/30 px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 disabled:opacity-50"
-        >
-          Διαγραφή
-        </button>
-      </div>
+      {isOwner && (
+        <div className="flex justify-end gap-3">
+          <DeleteJobButton jobId={jobData.id} locale={locale} />
+        </div>
+      )}
     </div>
   )
 }

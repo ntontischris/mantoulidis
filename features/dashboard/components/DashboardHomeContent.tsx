@@ -1,19 +1,48 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { getTranslations } from 'next-intl/server'
-import type { Metadata } from 'next'
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/client'
 import { PageHeader } from '@/components/shared/PageHeader'
+import { useEvents } from '@/features/events/hooks/useEvents'
+import { useBenefits } from '@/features/benefits/hooks/useBenefits'
+import { useAnnouncements, useSuccessStories } from '@/features/news/hooks/useNews'
 import { BENEFIT_CATEGORIES } from '@/features/benefits/types'
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>
-}): Promise<Metadata> {
-  const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'nav' })
-  return { title: t('home') }
+const STAT_KEYS = ['members', 'businesses', 'events', 'benefits'] as const
+
+function useDashboardStats() {
+  return useQuery({
+    queryKey: ['dashboard', 'stats'],
+    queryFn: async () => {
+      const supabase = createClient()
+      const [{ count: members }, { count: businesses }, { count: events }, { count: benefits }] =
+        await Promise.all([
+          supabase.from('profiles').select('id', { count: 'exact', head: true }),
+          supabase
+            .from('businesses')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_active', true),
+          supabase
+            .from('events')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'published'),
+          supabase
+            .from('benefits')
+            .select('id', { count: 'exact', head: true })
+            .eq('is_active', true),
+        ])
+      return {
+        members: members ?? 0,
+        businesses: businesses ?? 0,
+        events: events ?? 0,
+        benefits: benefits ?? 0,
+      }
+    },
+    staleTime: 60_000,
+  })
 }
 
 function formatShortDate(dateStr: string, locale: string): string {
@@ -30,70 +59,29 @@ function formatTime(dateStr: string): string {
   })
 }
 
-interface DashboardHomePageProps {
-  params: Promise<{ locale: string }>
+function SectionSkeleton() {
+  return (
+    <div className="space-y-3">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-16 animate-pulse rounded-lg bg-muted" />
+      ))}
+    </div>
+  )
 }
 
-export default async function DashboardHomePage({ params }: DashboardHomePageProps) {
-  const { locale } = await params
-  const supabase = await createClient()
-  const t = await getTranslations({ locale, namespace: 'home' })
+function EmptyState({ message }: { message: string }) {
+  return <p className="py-8 text-center text-sm text-muted-foreground">{message}</p>
+}
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect(`/${locale}/login`)
+export function DashboardHomeContent() {
+  const t = useTranslations('home')
+  const { locale } = useParams<{ locale: string }>()
 
-  // Fetch all data in parallel
-  const [
-    { count: membersCount },
-    { count: businessesCount },
-    { count: eventsCount },
-    { count: benefitsCount },
-    { data: upcomingEvents },
-    { data: activeBenefits },
-    { data: announcements },
-    { data: stories },
-  ] = await Promise.all([
-    supabase.from('profiles').select('id', { count: 'exact', head: true }),
-    supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('is_active', true),
-    supabase.from('events').select('id', { count: 'exact', head: true }).eq('status', 'published'),
-    supabase.from('benefits').select('id', { count: 'exact', head: true }).eq('is_active', true),
-    supabase
-      .from('events')
-      .select('id, title, start_date, location, rsvp_count, capacity')
-      .eq('status', 'published')
-      .gte('start_date', new Date().toISOString())
-      .order('start_date', { ascending: true })
-      .limit(3),
-    supabase
-      .from('benefits')
-      .select('id, title, partner_name, category, discount_text')
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(3),
-    supabase
-      .from('announcements')
-      .select('id, title, title_en, body, body_en, published_at, created_at')
-      .eq('is_published', true)
-      .order('published_at', { ascending: false })
-      .limit(3),
-    supabase
-      .from('success_stories')
-      .select(
-        'id, title, title_en, content, content_en, user_id, profiles:user_id(first_name, last_name)'
-      )
-      .eq('is_approved', true)
-      .order('created_at', { ascending: false })
-      .limit(2),
-  ])
-
-  const stats = [
-    { key: 'members', value: membersCount ?? 0 },
-    { key: 'businesses', value: businessesCount ?? 0 },
-    { key: 'events', value: eventsCount ?? 0 },
-    { key: 'benefits', value: benefitsCount ?? 0 },
-  ]
+  const stats = useDashboardStats()
+  const { data: upcomingEvents = [], isLoading: eventsLoading } = useEvents({ upcoming: true })
+  const { data: activeBenefits = [], isLoading: benefitsLoading } = useBenefits()
+  const { data: announcements = [], isLoading: newsLoading } = useAnnouncements()
+  const { data: stories = [], isLoading: storiesLoading } = useSuccessStories()
 
   return (
     <div className="space-y-6">
@@ -101,10 +89,12 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.key} className="card-base text-center">
-            <p className="text-2xl font-bold text-primary">{stat.value}</p>
-            <p className="text-sm text-muted-foreground">{t(`stats.${stat.key}`)}</p>
+        {STAT_KEYS.map((stat) => (
+          <div key={stat} className="card-base text-center">
+            <p className="text-2xl font-bold text-primary">
+              {stats.isLoading ? '...' : (stats.data?.[stat] ?? 0)}
+            </p>
+            <p className="text-sm text-muted-foreground">{t(`stats.${stat}`)}</p>
           </div>
         ))}
       </div>
@@ -122,11 +112,13 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
               {t('viewAll')}
             </Link>
           </div>
-          {!upcomingEvents || upcomingEvents.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">{t('empty.events')}</p>
+          {eventsLoading ? (
+            <SectionSkeleton />
+          ) : upcomingEvents.length === 0 ? (
+            <EmptyState message={t('empty.events')} />
           ) : (
             <div className="space-y-3">
-              {upcomingEvents.map((event) => (
+              {upcomingEvents.slice(0, 3).map((event) => (
                 <Link
                   key={event.id}
                   href={`/${locale}/dashboard/events/${event.id}`}
@@ -168,11 +160,13 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
               {t('viewAll')}
             </Link>
           </div>
-          {!activeBenefits || activeBenefits.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">{t('empty.benefits')}</p>
+          {benefitsLoading ? (
+            <SectionSkeleton />
+          ) : activeBenefits.length === 0 ? (
+            <EmptyState message={t('empty.benefits')} />
           ) : (
             <div className="space-y-3">
-              {activeBenefits.map((benefit) => {
+              {activeBenefits.slice(0, 3).map((benefit) => {
                 const categoryLabel =
                   BENEFIT_CATEGORIES.find((c) => c.value === benefit.category)?.label ??
                   benefit.category
@@ -216,13 +210,14 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
               {t('viewAll')}
             </Link>
           </div>
-          {!announcements || announcements.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">{t('empty.news')}</p>
+          {newsLoading ? (
+            <SectionSkeleton />
+          ) : announcements.length === 0 ? (
+            <EmptyState message={t('empty.news')} />
           ) : (
             <div className="space-y-3">
-              {announcements.map((ann) => {
+              {announcements.slice(0, 3).map((ann) => {
                 const title = locale === 'en' && ann.title_en ? ann.title_en : ann.title
-                const body = locale === 'en' && ann.body_en ? ann.body_en : ann.body
                 return (
                   <div key={ann.id} className="rounded-lg border border-border p-3">
                     <div className="flex items-start justify-between gap-2">
@@ -231,7 +226,9 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
                         {formatShortDate(ann.published_at ?? ann.created_at, locale)}
                       </time>
                     </div>
-                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{body}</p>
+                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                      {locale === 'en' && ann.body_en ? ann.body_en : ann.body}
+                    </p>
                   </div>
                 )
               })}
@@ -250,25 +247,28 @@ export default async function DashboardHomePage({ params }: DashboardHomePagePro
               {t('viewAll')}
             </Link>
           </div>
-          {!stories || stories.length === 0 ? (
-            <p className="py-8 text-center text-sm text-muted-foreground">{t('empty.spotlight')}</p>
+          {storiesLoading ? (
+            <SectionSkeleton />
+          ) : stories.length === 0 ? (
+            <EmptyState message={t('empty.spotlight')} />
           ) : (
             <div className="space-y-3">
-              {stories.map((story) => {
+              {stories.slice(0, 2).map((story) => {
                 const title = locale === 'en' && story.title_en ? story.title_en : story.title
                 const content =
                   locale === 'en' && story.content_en ? story.content_en : story.content
-                const author = Array.isArray(story.profiles) ? story.profiles[0] : story.profiles
                 return (
                   <div key={story.id} className="rounded-lg border border-border p-3">
-                    {author && (
+                    {story.author && (
                       <div className="mb-2 flex items-center gap-2">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-xs font-bold text-accent-foreground">
-                          {author.first_name[0]}
+                          {story.author.first_name[0]}
                         </div>
-                        <p className="text-sm font-medium text-foreground">
-                          {author.first_name} {author.last_name}
-                        </p>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            {story.author.first_name} {story.author.last_name}
+                          </p>
+                        </div>
                       </div>
                     )}
                     <p className="text-sm font-medium text-foreground">{title}</p>
