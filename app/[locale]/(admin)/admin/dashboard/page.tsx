@@ -8,7 +8,12 @@ const GrowthChart = dynamic(() => import('./GrowthChart').then((m) => m.GrowthCh
 })
 
 export default function AdminDashboardPage() {
-  const { data: stats, isLoading: loadingStats } = usePlatformStats()
+  const {
+    data: stats,
+    isLoading: loadingStats,
+    isError: statsError,
+    error: statsErr,
+  } = usePlatformStats()
   const { data: growth, isLoading: loadingGrowth } = useMemberGrowth()
 
   const statCards = stats
@@ -30,6 +35,17 @@ export default function AdminDashboardPage() {
         <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">Επισκόπηση platform</p>
       </div>
+
+      {/* DB connection error */}
+      {statsError && (
+        <div className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          ⚠️ Σφάλμα σύνδεσης με τη βάση:{' '}
+          <span className="font-mono">{(statsErr as Error)?.message}</span>
+          <p className="mt-1 text-xs opacity-80">
+            Βεβαιωθείτε ότι έχετε εκτελέσει όλα τα migrations στο Supabase.
+          </p>
+        </div>
+      )}
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
